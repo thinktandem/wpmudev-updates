@@ -1,9 +1,4 @@
 {
     "name": "thinktandem/wpmudev-updates",
-    "type": "wordpress-plugin",
-    "autoload": {
-        "classmap": [
-            "."
-        ]
-    }
+    "type": "wordpress-plugin"
 }
