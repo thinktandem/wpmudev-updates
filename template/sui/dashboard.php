@@ -122,7 +122,6 @@ foreach ( $projects as $key => $item ) {
 					<?php echo $support_threads; //phpcs:ignore  ?>
 				</span>
 			</li>
-
 		</ul>
 
 	</div>
@@ -148,8 +147,11 @@ foreach ( $projects as $key => $item ) {
 		<?php $this->render( 'sui/dashboard-templates/expired_membership_info', compact( 'urls', 'whitelabel_settings', 'analytics_enabled', 'total_visits', 'membership_data' ) ); ?>
 <?php endif; ?>
 
-		<?php // BOX: Tools. ?>
-		<?php $this->render( 'sui/dashboard-templates/tools', compact( 'urls', 'whitelabel_settings', 'analytics_enabled', 'total_visits', 'membership_data' ) ); ?>
+		<?php // BOX: Analytics. ?>
+		<?php $this->render( 'sui/dashboard-templates/analytics', compact( 'urls', 'analytics_enabled', 'membership_data' ) ); ?>
+
+		<?php // BOX: Whitelabel. ?>
+		<?php $this->render( 'sui/dashboard-templates/whitelabel', compact( 'urls', 'whitelabel_settings', 'membership_data' ) ); ?>
 
 		<?php // BOX: Resources. ?>
 		<?php $this->render( 'sui/dashboard-templates/resources', compact( 'urls', 'membership_data' ) ); ?>

@@ -4,7 +4,7 @@
  * Plugin URI:  https://premium.wpmudev.org/project/wpmu-dev-dashboard/
  * Description: Brings the powers of WPMU DEV directly to you. It will revolutionize how you use WordPress. Activate now!
  * Author:      WPMU DEV
- * Version:     4.9.4
+ * Version:     4.10.6
  * Author URI:  https://premium.wpmudev.org/
  * Text Domain: wpmudev
  * Domain Path: includes/languages/
@@ -44,17 +44,18 @@ class WPMUDEV_Dashboard {
 	 *
 	 * @var string (Version number)
 	 */
-	static public $version = '4.9.4';
+	public static $version = '4.10.6';
 
 	/**
 	 * The current SUI version.
+	 *
 	 * @var string (SUI Version number)
 	 *
 	 * Required for the body class on admin pages
 	 * Use sui followed by version number
 	 * Use dash instead of dots as number seperator
 	 */
-	static public $sui_version = 'sui-2-6-0';
+	public static $sui_version = 'sui-2-9-6';
 
 
 	/**
@@ -120,7 +121,7 @@ class WPMUDEV_Dashboard {
 	 * @since  4.0.0
 	 * @return WPMUDEV_Dashboard
 	 */
-	static public function instance() {
+	public static function instance() {
 		static $Inst = null;
 
 		if ( null === $Inst ) {
@@ -190,22 +191,22 @@ class WPMUDEV_Dashboard {
 		global $current_user;
 
 		// Make sure all Dashboard settings exist in the DB.
-		WPMUDEV_Dashboard::$site->init_options();
+		self::$site->init_options();
 
 		// Reset the admin-user when plugin is activated.
 		if ( $current_user && $current_user->ID ) {
-			WPMUDEV_Dashboard::$site->set_option( 'limit_to_user', $current_user->ID );
+			self::$site->set_option( 'limit_to_user', $current_user->ID );
 		} else {
-			WPMUDEV_Dashboard::$site->set_option( 'limit_to_user', '' );
+			self::$site->set_option( 'limit_to_user', '' );
 		}
 
 		// On next page load we want to redirect user to login page.
-		WPMUDEV_Dashboard::$site->set_option( 'redirected_v4', 0 );
+		self::$site->set_option( 'redirected_v4', 0 );
 
 		// Force refresh of all data when plugin is activated.
-		WPMUDEV_Dashboard::$site->set_option( 'refresh_profile_flag', 1 );
-		add_action( 'shutdown', array( WPMUDEV_Dashboard::$api, 'refresh_projects_data' ) ); // this needs to trigger after init to prevent Call to undefined function wp_get_current_user() errors.
-		WPMUDEV_Dashboard::$site->schedule_shutdown_refresh();
+		self::$site->set_option( 'refresh_profile_flag', 1 );
+		add_action( 'shutdown', array( self::$api, 'refresh_projects_data' ) ); // this needs to trigger after init to prevent Call to undefined function wp_get_current_user() errors.
+		self::$site->schedule_shutdown_refresh();
 	}
 
 	/**
@@ -216,7 +217,7 @@ class WPMUDEV_Dashboard {
 	 */
 	public function deactivate_plugin() {
 		// On next page load we want to redirect user to login page.
-		WPMUDEV_Dashboard::$site->set_option( 'redirected_v4', 0 );
+		self::$site->set_option( 'redirected_v4', 0 );
 	}
 
 	/**
@@ -227,7 +228,7 @@ class WPMUDEV_Dashboard {
 	 */
 	public static function uninstall_plugin() {
 		// On next page load we want to redirect user to login page.
-		WPMUDEV_Dashboard::$site->logout( false );
+		self::$site->logout( false );
 		// TODO Delete all options from DB.
 	}
 };

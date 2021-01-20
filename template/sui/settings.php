@@ -37,106 +37,57 @@ if ( WPMUDEV_LIMIT_TO_USER ) {
 	$can_manage_users = false;
 }
 ?>
-
-<?php if ( isset( $_GET['success-action'] ) ) : // wpcs csrf ok. ?>
-
-	<?php switch ( $_GET['success-action'] ) { // wpcs csrf ok.
-
-		case 'autoupdate-dashboard' : ?>
-
-			<div class="sui-notice-top sui-notice-success sui-can-dismiss">
-
-				<div class="sui-notice-content">
-					<p><?php esc_html_e( 'General settings updated.', 'wpmudev' ); ?></p>
-				</div>
-
-				<span class="sui-notice-dismiss">
-					<a role="button" aria-label="Dismiss" class="sui-icon-check"></a>
-				</span>
-
+<div class="sui-floating-notices">
+	<?php
+	if ( isset( $_GET['success-action'] ) ) : //phpcs:ignore
+		?>
+			<?php
+			switch ( $_GET['success-action'] ) { //phpcs:ignore
+				case 'autoupdate-dashboard':
+					$notice_msg = '<p>' . esc_html__( 'General settings updated.', 'wpmudev' ) . '</p>';
+					$notice_id  = 'notice-success-update-dashboard';
+					break;
+				case 'translation-setup':
+					$notice_msg = '<p>' . esc_html__( 'Translation settings updated.', 'wpmudev' ) . '</p>';
+					$notice_id  = 'notice-success-translation-setup';
+					break;
+				case 'admin-add':
+					$notice_msg = '<p>' . esc_html__( 'User added.', 'wpmudev' ) . '</p>';
+					$notice_id  = 'notice-success-admin-add';
+					break;
+				case 'admin-remove':
+					$notice_msg = '<p>' . esc_html__( 'User removed.', 'wpmudev' ) . '</p>';
+					$notice_id  = 'notice-success-admin-remove';
+					break;
+				case 'check-updates':
+					$notice_msg = '<p>' . esc_html__( 'Data successfully updated.', 'wpmudev' ) . '</p>';
+					$notice_id  = 'remote-check-success';
+					break;
+				default:
+					break;
+			}
+			?>
+			<div
+			role="alert"
+			id="<?php echo esc_attr( $notice_id ); ?>"
+			class="sui-settings-notice-alert sui-notice"
+			aria-live="assertive"
+			data-show-dismiss="true"
+			data-notice-type="success"
+			data-notice-msg="<?php echo wp_kses_post( $notice_msg ); ?>"
+			>
 			</div>
-
-			<?php break;
-
-		case 'translation-setup' : ?>
-
-			<div class="sui-notice-top sui-notice-success sui-can-dismiss">
-
-				<div class="sui-notice-content">
-					<p><?php esc_html_e( 'Translation settings updated.', 'wpmudev' ); ?></p>
-				</div>
-
-				<span class="sui-notice-dismiss">
-					<a role="button" aria-label="Dismiss" class="sui-icon-check"></a>
-				</span>
-
-			</div>
-
-			<?php break;
-
-
-		case 'admin-add' : ?>
-
-			<div class="sui-notice-top sui-notice-success sui-can-dismiss">
-
-				<div class="sui-notice-content">
-					<p><?php esc_html_e( 'User added.', 'wpmudev' ); ?></p>
-				</div>
-
-				<span class="sui-notice-dismiss">
-					<a role="button" aria-label="Dismiss" class="sui-icon-check"></a>
-				</span>
-
-			</div>
-
-			<?php break;
-
-		case 'admin-remove' : ?>
-
-			<div class="sui-notice-top sui-notice-success sui-can-dismiss">
-
-				<div class="sui-notice-content">
-					<p><?php esc_html_e( 'User removed.', 'wpmudev' ); ?></p>
-				</div>
-
-				<span class="sui-notice-dismiss">
-					<a role="button" aria-label="Dismiss" class="sui-icon-check"></a>
-				</span>
-
-			</div>
-
-			<?php break;
-		default:
-			break;
-	} ?>
-
-<?php endif; ?>
-
-<?php if ( isset( $_GET['failed-action'] ) ) : // wpcs csrf ok. ?>
-
-	<?php switch ( $_GET['failed-action'] ) { // wpcs csrf ok.
-
-		case 'remote-grant' : ?>
-
-			<div class="sui-notice-top sui-notice-error sui-can-dismiss">
-
-				<div class="sui-notice-content">
-					<p><?php esc_html_e( 'Failed to grant support access.', 'wpmudev' ); ?></p>
-				</div>
-
-				<span class="sui-notice-dismiss">
-					<a role="button" aria-label="Dismiss" class="sui-icon-check"></a>
-				</span>
-
-			</div>
-
-			<?php break;
-		default:
-			break;
-	} ?>
-
-<?php endif; ?>
-
+	<?php endif; ?>
+	<div
+	role="alert"
+	id="js-translation-updated"
+	class="sui-settings-translation-alert sui-notice"
+	aria-live="assertive"
+	data-show-dismiss="true"
+	data-notice-type="success"
+	>
+	</div>
+</div>
 <div class="sui-row-with-sidenav">
 
 	<div class="sui-sidenav">
@@ -180,7 +131,7 @@ if ( WPMUDEV_LIMIT_TO_USER ) {
 
 	</div>
 
-	<div class="sui-box js-sidenav-content" id="general" style="display: none;">
+	<div class="sui-box js-sidenav-content" id="general" style="display: block;">
 
 		<form method="POST" action="<?php echo esc_url( $urls->settings_url ) . '#general'; ?>">
 
@@ -252,7 +203,16 @@ if ( WPMUDEV_LIMIT_TO_USER ) {
 						<label for="enable_sso"><?php esc_html_e( 'Enable Single Sign-on for this website', 'wpmudev' ); ?></label>
 
 						<div class="enable_sso_label">
-							<div class="sui-notice"><p><?php printf( esc_html__( 'Note: You need to stay logged into %1$1s The Hub%2$2s to use this feature.', 'wpmudev' ), '<a href="https://premium.wpmudev.org/hub/my-websites/">', '</a>' ); ?></p></div>
+							<div class="sui-notice">
+								<div class="sui-notice-content">
+									<div class="sui-notice-message">
+
+										<span class="sui-notice-icon sui-icon-info sui-md" aria-hidden="true"></span>
+
+										<p><?php printf( esc_html__( 'Note: You need to stay logged into %1$1s The Hub%2$2s to use this feature.', 'wpmudev' ), '<a href="https://premium.wpmudev.org/hub/my-websites/">', '</a>' ); ?></p>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -328,10 +288,10 @@ if ( WPMUDEV_LIMIT_TO_USER ) {
 						</span>
 						<div id="dashui-dropdown-language">
 							<?php
-							require_once( ABSPATH . 'wp-admin/includes/translation-install.php' );
-							$languages = get_available_languages();
-							$translations = wp_get_available_translations();
-                            $locale = WPMUDEV_Dashboard::$site->get_option( 'translation_locale' );
+							require_once ABSPATH . 'wp-admin/includes/translation-install.php';
+							$languages        = get_available_languages();
+							$translations     = wp_get_available_translations();
+							$locale           = WPMUDEV_Dashboard::$site->get_option( 'translation_locale' );
 							$current_language = get_locale();
 
 							if ( 'en_US' === $current_language ) {
@@ -342,7 +302,7 @@ if ( WPMUDEV_LIMIT_TO_USER ) {
 
 							if ( 'en_US' === $locale ) {
 								$locale = '';
-                            }
+							}
 
 							wp_dropdown_languages(
 								array(
@@ -353,7 +313,8 @@ if ( WPMUDEV_LIMIT_TO_USER ) {
 									'translations' => $translations,
 									'show_available_translations' => current_user_can( 'install_languages' ) && wp_can_install_language_pack(),
 								)
-							); ?>
+							);
+							?>
 						</div>
 
 						<span class="sui-description"><?php printf( esc_html__( 'Your %1$sWordPress Language Settings%2$s are set to %3$s .', 'wpmudev' ), '<a href="' . esc_url( admin_url( 'options-general.php' ) ) . '">', '</a>', esc_html( $current_native_language ) ); ?></span>
@@ -373,25 +334,37 @@ if ( WPMUDEV_LIMIT_TO_USER ) {
 					<div class="sui-box-settings-col-2">
 						<?php
 						$translation_update_count = count( $translation_update );
-						if( $translation_update_count > 0 ): ?>
+						if ( $translation_update_count > 0 ) :
+							?>
 							<div class="sui-notice sui-notice-warning">
 								<div class="sui-notice-content">
-									<p><?php esc_html_e( sprintf( 'You have %d translations ready to update.', $translation_update_count ), 'wpmudev' ); ?></p>
-									<button
-										name="update_tranlsations"
-										id="update_tranlsations"
-										class="sui-button"
-										style="margin-top: 10px"
-									>
+									<div class="sui-notice-message">
+
+										<span class="sui-notice-icon sui-icon-info sui-md" aria-hidden="true"></span>
+
+										<p><?php esc_html_e( sprintf( 'You have %d translations ready to update.', $translation_update_count ), 'wpmudev' ); ?></p>
+										<button
+										id="update_translations"
+										data-modal-open="update-translation-modal"
+										data-modal-mask="true"
+										data-replace="false"
+										class="sui-button modal-open"
+										>
 										<i class="sui-icon-update" aria-hidden="true"></i>
 										<?php esc_html_e( 'Update Translations', 'wpmudev' ); ?>
 									</button>
+									</div>
 								</div>
 							</div>
-						<?php else: ?>
+						<?php else : ?>
 							<div class="sui-notice sui-notice-success">
 								<div class="sui-notice-content">
-									<p><?php esc_html_e( 'All translations are up to date.', 'wpmudev' ); ?></p>
+									<div class="sui-notice-message">
+
+										<span class="sui-notice-icon sui-icon-info sui-md" aria-hidden="true"></span>
+
+										<p><?php esc_html_e( 'All translations are up to date.', 'wpmudev' ); ?></p>
+									</div>
 								</div>
 							</div>
 						<?php endif; ?>
@@ -475,7 +448,8 @@ if ( WPMUDEV_LIMIT_TO_USER ) {
 
 						<div class="dashui-list-users">
 
-							<?php foreach ( $allowed_users as $user ) :
+							<?php
+							foreach ( $allowed_users as $user ) :
 
 								$disabled   = '';
 								$remove_url = '';
@@ -496,7 +470,8 @@ if ( WPMUDEV_LIMIT_TO_USER ) {
 
 								} else {
 									$disabled = ' disabled';
-								} ?>
+								}
+								?>
 
 								<div class="dashui-user">
 
@@ -548,15 +523,29 @@ if ( WPMUDEV_LIMIT_TO_USER ) {
 
 						</div>
 
-						<button class="sui-button sui-button-ghost js-show-admin-add-modal" <?php echo( ! $can_manage_users ? 'disabled="disabled"' : '' ); ?>>
+						<button
+						id="open-add-user"
+						data-modal-open="wpmudev-add-user"
+						data-modal-mask="true"
+						data-replace="false"
+						class="sui-button sui-button-ghost modal-open"
+						<?php echo( ! $can_manage_users ? 'disabled="disabled"' : '' ); ?>
+						>
 							<i class="sui-icon-plus" aria-hidden="true"></i>
 							<?php esc_html_e( 'ADD USER', 'wpmudev' ); ?>
 						</button>
 
-						<?php if ( ! $can_manage_users ) : ?>
 
-							<div class="sui-notice">
-								<p><?php esc_html_e( 'To manage user permissions here you need to remove the constant WPMUDEV_LIMIT_TO_USER from your wp-config file.', 'wpmudev' ); ?></p>
+						<?php if ( ! $can_manage_users ) : ?>
+							<div class="sui-notice" style="margin: 30px 0;">
+								<div class="sui-notice-content">
+									<div class="sui-notice-message">
+
+										<span class="sui-notice-icon sui-icon-info sui-md" aria-hidden="true"></span>
+
+										<p><?php esc_html_e( 'To manage user permissions here you need to remove the constant WPMUDEV_LIMIT_TO_USER from your wp-config file.', 'wpmudev' ); ?></p>
+									</div>
+								</div>
 							</div>
 
 						<?php endif; ?>
@@ -594,7 +583,7 @@ if ( WPMUDEV_LIMIT_TO_USER ) {
 
 		<div class="sui-box-body">
 
-			<p><?php esc_html_e( 'Your API Key is unique to your WPM DEV account and is the connection between you and our servers, and your access to all our Pro plugins syncing with The Hub.', 'wpmudev' ); ?></p>
+			<p><?php esc_html_e( 'Your API Key is unique to your WPMU DEV account and is the connection between you and our servers, and your access to all our Pro plugins syncing with The Hub.', 'wpmudev' ); ?></p>
 
 			<div class="sui-form-field ">
 
@@ -611,13 +600,14 @@ if ( WPMUDEV_LIMIT_TO_USER ) {
 				</div>
 
 			</div>
-
-			<div class="sui-notice">
-
-				<p><?php esc_html_e( 'Note: If you are experiencing issues connecting to WPMU DEV, resetting this key can sometimes fix issues. You can do this via the Manage API Key button above.', 'wpmudev' ); ?></p>
-
+			<div class="sui-notice" style="margin: 30px 0;">
+				<div class="sui-notice-content">
+					<div class="sui-notice-message">
+						<span class="sui-notice-icon sui-icon-info sui-md" aria-hidden="true"></span>
+						<p><?php esc_html_e( 'Note: If you are experiencing issues connecting to WPMU DEV, resetting this key can sometimes fix issues. You can do this via the Manage API Key button above.', 'wpmudev' ); ?></p>
+					</div>
+				</div>
 			</div>
-
 		</div>
 
 	</div>
@@ -627,38 +617,40 @@ if ( WPMUDEV_LIMIT_TO_USER ) {
 <?php
 $this->render( 'sui/element-last-refresh' );
 
-$this->render( 'sui/footer' ); ?>
+$this->render( 'sui/footer' );
+?>
+<!-- add admin modal -->
+<div class="sui-modal sui-modal-sm">
 
-<div class="sui-dialog sui-dialog-alt sui-dialog-sm" aria-hidden="true" tabindex="-1" id="admin-add">
+	<div
+		role="dialog"
+		id="wpmudev-add-user"
+		class="sui-modal-content"
+		aria-modal="true"
+		aria-labelledby="wpmudev-add-user-title"
+		aria-describedby="wpmudev-add-user-desc"
+	>
+		<div class="sui-box">
 
-	<div class="sui-dialog-overlay" data-a11y-dialog-hide></div>
+			<div class="sui-box-header sui-flatten sui-content-center sui-spacing-top--60">
 
-	<div class="sui-dialog-content" aria-labelledby="dialogTitle" aria-describedby="dialogDescription" role="dialog">
+				<button class="sui-button-icon sui-button-float--right" data-modal-close="">
+					<i class="sui-icon-close sui-md" aria-hidden="true"></i>
+					<span class="sui-screen-reader-text"><?php esc_html_e( 'Close this dialog.' ); ?></span>
+				</button>
 
-		<div class="sui-box" role="document">
+				<h3 id="wpmudev-add-user-title" class="sui-box-title sui-lg"><?php esc_html_e( 'Add User', 'wpmudev' ); ?></h3>
 
+				<p id="wpmudev-add-user-desc" class="sui-description"><?php esc_html_e( 'Add as many administrators as you like. Only these specific users will see the WPMU DEV menu.', 'wpmudev' ); ?></p>
+
+			</div>
 			<form id="form-admin-add" action="<?php echo esc_url( $urls->settings_url ) . '#permissions'; ?>" method="POST">
 
-				<input type="hidden" name="action" value="admin-add" />
-
-				<?php wp_nonce_field( 'admin-add', 'hash' ); ?>
-
-				<div class="sui-box-header sui-block-content-center">
-
-					<h3 class="sui-box-title" id="dialogTitle"><?php esc_html_e( 'Add User', 'wpmudev' ); ?></h3>
-
-					<a class="sui-dialog-close" data-a11y-dialog-hide>
-						<span class="sui-screen-reader-text"><?php esc_html_e( 'Close this dialog window', 'wpmudev' ); ?></span>
-					</a>
-
-				</div>
-
-				<div class="sui-box-body sui-box-body-slim sui-block-content-center">
-
-					<p id="dialogDescription" class="sui-description"><?php esc_html_e( 'Add as many administrators as you like. Only these specific users will see the WPMU DEV menu.', 'wpmudev' ); ?></p>
-
+				<div class="sui-box-body">
+					<input type="hidden" name="action" value="admin-add" />
+					<?php wp_nonce_field( 'admin-add', 'hash' ); ?>
 					<div class="sui-form-field">
-						<label class="sui-label" for="searchuser"><?php echo esc_html__('Search users', 'wpmudev'); ?></label>
+						<label class="sui-label" for="searchuser"><?php echo esc_html__( 'Search users', 'wpmudev' ); ?></label>
 						<div class="sui-control-with-icon">
 							<select class="sui-select sui-form-control"
 								id="searchuser"
@@ -677,7 +669,7 @@ $this->render( 'sui/footer' ); ?>
 					</div>
 				</div>
 
-				<div class="sui-box-footer" style="padding-top: 0;">
+				<div class="sui-box-footer sui-flatten sui-content-separated">
 
 					<a class="sui-button sui-button-ghost" data-a11y-dialog-hide="admin-add"><?php esc_html_e( 'Cancel', 'wpmudev' ); ?></a>
 
@@ -687,63 +679,14 @@ $this->render( 'sui/footer' ); ?>
 					</button>
 
 				</div>
-
 			</form>
 
 		</div>
 
 	</div>
-</div>
-<?php // bulk action ?>
-<div class="sui-dialog sui-dialog-alt sui-dialog-sm" aria-hidden="true" tabindex="-1" id="bulk-action-translation-modal">
-	<div class="sui-dialog-overlay" data-a11y-dialog-hide></div>
-
-	<div class="sui-dialog-content" aria-labelledby="dialogTitle" aria-describedby="dialogDescription" role="dialog">
-
-		<div class="sui-box">
-
-			<div class="sui-box-header sui-block-content-center">
-				<h3 class="sui-box-title" id="dialogTitle"><?php esc_html_e( 'Updating Translations', 'wpmudev' ); ?></h3>
-			</div>
-
-			<div class="sui-box-body">
-				<p id="dialogDescription" class="sui-description">
-					<?php esc_html_e( 'Please wait while we download and install those translations for you.', 'wpmudev' ); ?>
-				</p>
-				<div class="sui-notice sui-notice-warning js-bulk-errors" style="text-align:left">
-				</div>
-
-				<div class="sui-progress-block">
-
-					<div class="sui-progress">
-
-						<span class="sui-progress-icon js-bulk-actions-loader-icon" aria-hidden="true">
-							<i class="sui-icon-loader sui-loading"></i>
-						</span>
-
-						<span class="sui-progress-text">
-							<span>0%</span>
-						</span>
-
-						<div class="sui-progress-bar" aria-hidden="true">
-							<span style="width: 0%" class="js-bulk-actions-progress"></span>
-						</div>
-					</div>
-				</div>
-
-				<div class="sui-progress-state">
-					<span class="js-bulk-actions-state"></span>
-				</div>
-
-			</div>
-
-			<div class="sui-hidden js-bulk-hash" data-translation-update="<?php echo esc_attr( wp_create_nonce( 'translation-update' ) ); ?>"></div>
-
-		</div>
-
-	</div><div tabindex="0"></div>
 
 </div>
+
 <div class="sui-hidden">
 	<div class="js-notifications">
 		<div class="sui-notice-top sui-notice-success sui-can-dismiss js-translation-updated">

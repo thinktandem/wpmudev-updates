@@ -69,7 +69,7 @@ if ( ( ! isset( $queue[ $this->_membership_notice ] ) || ! isset( $queue[ $this-
 
 </div><!-- End Overview -->
 
-<div class="sui-row-with-sidenav dashui-plugin-box ">
+<div class="sui-row-with-sidenav dashui-plugin-box">
 	<div class="sui-sidenav dashui-plugins-filter-tabs dashui-mobile-hidden">
 		<div class="sui-sidenav-sticky sui-sidenav-hide-md">
 			<div class="sui-tabs-menu sui-sidenav-sticky">
@@ -164,9 +164,17 @@ if ( ( ! isset( $queue[ $this->_membership_notice ] ) || ! isset( $queue[ $this-
 
 		<div class="sui-box-body">
 
-			<div class="sui-notice sui-notice-info js-no-result-search sui-hidden">
-				<p class="js-no-result-search-message"></p>
+			<div
+			role="alert"
+			id="sui-no-result-search"
+			class="js-no-result-search-message sui-notice"
+			aria-live="assertive"
+			data-show-dismiss="false"
+			data-notice-type="info"
+			data-notice-msg=""
+			>
 			</div>
+
 			<p style="margin-top: 0;"><?php esc_html_e( 'Install, update and configure our Pro plugins.', 'wpmudev' ); ?></p>
 
 			<?php if ( $free ) : ?>
@@ -245,183 +253,82 @@ if ( ( ! isset( $queue[ $this->_membership_notice ] ) || ! isset( $queue[ $this-
 
 	</div>
 
-</div><!-- End Plugin Box -->
+</div>
+
+<?php
+$this->render( 'sui/plugins-bulk-notice' );
+
+foreach ( $data['projects'] as $project ) {
+	if ( empty( $project['id'] ) ) {
+		continue;
+	}
+	if ( 'plugin' !== $project['type'] ) {
+		continue;
+	}
+
+	$this->render_project( $project['id'] );
+}
+?>
 
 <div class="sui-hidden">
 	<?php
-	foreach ( $data['projects'] as $project ) {
-		if ( empty( $project['id'] ) ) {
-			continue;
-		}
-		if ( 'alt_plugin' === $project['type'] ) {
-			$this->render_alt_project( $project['id'] );
-		}
-		if ( 'plugin' !== $project['type'] ) {
-			continue;
-		}
-
-		$this->render_project( $project['id'] );
-	}
+	/**
+	 * ROW FOR NOT INSTALLED PLUGIN LIST TABLE
+	 */
 	?>
-
-	<div class="js-notifications">
-		<div class="sui-notice-top sui-notice-success js-activated-single">
-			<div class="sui-notice-content">
-				<p><strong><?php esc_html_e( 'Success', 'wpmudev' ); ?>:</strong> <?php esc_html_e( 'Plugin activated successfully.', 'wpmudev' ); ?></p>
-				<p><?php esc_html_e( 'Please wait while we refresh the page...', 'wpmudev' ); ?></p>
-			</div>
-		</div>
-		<div class="sui-notice-top sui-notice-error sui-can-dismiss js-failed-activated-single">
-			<div class="sui-notice-content">
-				<p><strong><?php esc_html_e( 'Failed', 'wpmudev' ); ?>:</strong> <?php esc_html_e( 'Plugin failed to be activated.', 'wpmudev' ); ?></p>
-				<p class="js-custom-message"></p>
-			</div>
-			<span class="sui-notice-dismiss">
-				<a role="button" aria-label="Dismiss" class="sui-icon-check"></a>
-			</span>
-		</div>
-		<div class="sui-notice-top sui-notice-success js-activated-multi">
-			<div class="sui-notice-content">
-				<p><strong><?php esc_html_e( 'Success', 'wpmudev' ); ?>:</strong> <?php esc_html_e( 'Plugins activated.', 'wpmudev' ); ?></p>
-				<p><?php esc_html_e( 'Please wait while we refresh the page...', 'wpmudev' ); ?></p>
-			</div>
-		</div>
-
-		<div class="sui-notice-top sui-notice-success js-deactivated-single">
-			<div class="sui-notice-content">
-				<p><strong><?php esc_html_e( 'Success', 'wpmudev' ); ?>:</strong> <?php esc_html_e( 'Plugin deactivated.', 'wpmudev' ); ?></p>
-				<p><?php esc_html_e( 'Please wait while we refresh the page...', 'wpmudev' ); ?></p>
-			</div>
-		</div>
-		<div class="sui-notice-top sui-notice-success js-deactivated-multi">
-			<div class="sui-notice-content">
-				<p><strong><?php esc_html_e( 'Success', 'wpmudev' ); ?>:</strong> <?php esc_html_e( 'Plugins deactivated.', 'wpmudev' ); ?></p>
-				<p><?php esc_html_e( 'Please wait while we refresh the page...', 'wpmudev' ); ?></p>
-			</div>
-		</div>
-
-		<div class="sui-notice-top sui-notice-success sui-can-dismiss js-installed-single">
-			<div class="sui-notice-content">
-				<p><strong><?php esc_html_e( 'Success', 'wpmudev' ); ?>:</strong> <?php esc_html_e( 'Plugin successfully installed.', 'wpmudev' ); ?></p>
-			</div>
-			<span class="sui-notice-dismiss">
-				<a role="button" aria-label="Dismiss" class="sui-icon-check"></a>
-			</span>
-		</div>
-		<div class="sui-notice-top sui-notice-error sui-can-dismiss js-failed-installed-single">
-			<div class="sui-notice-content">
-				<p><strong><?php esc_html_e( 'Failed', 'wpmudev' ); ?>:</strong> <?php esc_html_e( 'Plugin failed to be installed.', 'wpmudev' ); ?></p>
-				<p class="js-custom-message"></p>
-			</div>
-			<span class="sui-notice-dismiss">
-				<a role="button" aria-label="Dismiss" class="sui-icon-check"></a>
-			</span>
-		</div>
-
-		<div class="sui-notice-top sui-notice-success sui-can-dismiss js-deleted-single">
-			<div class="sui-notice-content">
-				<p><strong><?php esc_html_e( 'Success', 'wpmudev' ); ?>:</strong> <?php esc_html_e( 'Plugin successfully deleted.', 'wpmudev' ); ?></p>
-			</div>
-			<span class="sui-notice-dismiss">
-				<a role="button" aria-label="Dismiss" class="sui-icon-check"></a>
-			</span>
-		</div>
-		<div class="sui-notice-top sui-notice-error sui-can-dismiss js-failed-deleted-single">
-			<div class="sui-notice-content">
-				<p><strong><?php esc_html_e( 'Failed', 'wpmudev' ); ?>:</strong> <?php esc_html_e( 'Plugin failed to be deleted.', 'wpmudev' ); ?></p>
-				<p class="js-custom-message"></p>
-			</div>
-			<span class="sui-notice-dismiss">
-				<a role="button" aria-label="Dismiss" class="sui-icon-check"></a>
-			</span>
-		</div>
-
-		<div class="sui-notice-top sui-notice-success sui-can-dismiss js-updated-single">
-			<div class="sui-notice-content">
-				<p><strong><?php esc_html_e( 'Success', 'wpmudev' ); ?>:</strong> <?php esc_html_e( 'Plugin successfully updated.', 'wpmudev' ); ?></p>
-			</div>
-			<span class="sui-notice-dismiss">
-				<a role="button" aria-label="Dismiss" class="sui-icon-check"></a>
-			</span>
-		</div>
-		<div class="sui-notice-top sui-notice-error sui-can-dismiss js-failed-updated-single">
-			<div class="sui-notice-content">
-				<p><strong><?php esc_html_e( 'Failed', 'wpmudev' ); ?>:</strong> <?php esc_html_e( 'Plugin failed to be updated.', 'wpmudev' ); ?></p>
-				<p class="js-custom-message"></p>
-			</div>
-			<span class="sui-notice-dismiss">
-				<a role="button" aria-label="Dismiss" class="sui-icon-check"></a>
-			</span>
-		</div>
-
-		<div class="sui-notice-top sui-notice-success sui-can-dismiss js-updated-bulk">
-			<div class="sui-notice-content">
-				<p><strong><?php esc_html_e( 'Success', 'wpmudev' ); ?>:</strong> <?php esc_html_e( 'Plugins successfully updated.', 'wpmudev' ); ?></p>
-			</div>
-			<span class="sui-notice-dismiss">
-				<a role="button" aria-label="Dismiss" class="sui-icon-check"></a>
-			</span>
-		</div>
-
-		<div class="sui-notice-top sui-notice-success sui-can-dismiss js-installed-bulk">
-			<div class="sui-notice-content">
-				<p><strong><?php esc_html_e( 'Success', 'wpmudev' ); ?>:</strong> <?php esc_html_e( 'Plugins successfully installed.', 'wpmudev' ); ?></p>
-			</div>
-			<span class="sui-notice-dismiss">
-				<a role="button" aria-label="Dismiss" class="sui-icon-check"></a>
-			</span>
-		</div>
-
-		<div class="sui-notice-top sui-notice-success sui-can-dismiss js-deleted-bulk">
-			<div class="sui-notice-content">
-				<p><strong><?php esc_html_e( 'Success', 'wpmudev' ); ?>:</strong> <?php esc_html_e( 'Plugins successfully deleted.', 'wpmudev' ); ?></p>
-			</div>
-			<span class="sui-notice-dismiss">
-				<a role="button" aria-label="Dismiss" class="sui-icon-check"></a>
-			</span>
-		</div>
-
-
-		<div class="sui-notice-top sui-notice-error sui-can-dismiss js-general-fail">
-			<div class="sui-notice-content">
-				<p><strong><?php esc_html_e( 'Failed', 'wpmudev' ); ?>:</strong> <?php esc_html_e( 'Whoops, we had an unexpected response from WordPress, please try again.', 'wpmudev' ); ?></p>
-			</div>
-			<span class="sui-notice-dismiss">
-				<a role="button" aria-label="Dismiss" class="sui-icon-check"></a>
-			</span>
-		</div>
+	<div class="js-available-plugin-header">
+		<table>
+			<tr class="dashui-tr-header">
+				<td><p><?php esc_html_e( 'Available', 'wpmudev' ); ?></p></td>
+				<td></td>
+				<td></td>
+			</tr>
+		</table>
 	</div>
-
 </div>
 
 <?php // bulk action. ?>
-<div class="sui-dialog" aria-hidden="true" tabindex="-1" id="bulk-action-modal">
-
-	<div class="sui-dialog-overlay" data-a11y-dialog-hide></div>
-
-	<div class="sui-dialog-content" aria-labelledby="dialogTitle" aria-describedby="dialogDescription" role="alertdialog">
-
-		<div class="sui-box" role="document">
-
+<div class="sui-modal sui-modal-md">
+	<div
+	role="dialog"
+	id="bulk-action-modal"
+	class="sui-modal-content"
+	aria-modal="true"
+	aria-labelledby="bulk-action-modal-title"
+	aria-describedby=""
+	>
+		<div class="sui-box">
 			<div class="sui-box-header">
-				<h3 class="sui-box-title" id="dialogTitle"><?php esc_html_e( 'Bulk Actions', 'wpmudev' ); ?></h3>
-				<div class="sui-actions-right">
-					<a data-a11y-dialog-hide class="sui-dialog-close" aria-label="<?php esc_html_e( 'Close this dialog window', 'wpmudev' ); ?>"></a>
+				<h3 id="bulk-action-modal-title" class="sui-box-title"><?php esc_html_e( 'Bulk Actions', 'wpmudev' ); ?></h3>
+				<div class="sui-actions-right" aria-hidden="true">
+					<button class="sui-button-icon sui-button-float--right bulk-modal-close" data-modal-close="">
+						<i class="sui-icon-close sui-md" aria-hidden="true"></i>
+						<span class="sui-screen-reader-text"><?php esc_html_e( 'Close this dialog.' ); ?></span>
+					</button>
 				</div>
+
 			</div>
-
 			<div class="sui-box-body">
-
-				<div class="sui-notice sui-notice-warning js-bulk-errors" style="text-align:left">
+				<div
+					role="alert"
+					id="js-bulk-errors"
+					class="js-bulk-errors sui-notice sui-notice-warning"
+					aria-live="assertive"
+				>
 				</div>
 
-				<div class="sui-notice js-bulk-message-need-reload" style="text-align:left">
-					<p><?php esc_html_e( 'This page needs to be reloaded before changes you just made become visible.', 'wpmudev' ); ?></p>
-					<div class="sui-notice-buttons">
-						<a href="" class="sui-button"><?php esc_html_e( 'Reload now', 'wpmudev' ); ?></a>
-					</div>
+				<?php
+				// message for page reload
+				$msg = '<p>' . esc_html__( 'This page needs to be reloaded before changes you just made become visible.', 'wpmudev' ) . "</p><div class='sui-notice-buttons'><a href='' class='sui-button'>" . esc_html__( 'Reload now', 'wpmudev' ) . '</a></div>';
+				?>
+				<div
+					role="alert"
+					id="js-bulk-message-need-reload"
+					data-message="<?php echo $msg; ?>"
+					class="sui-notice js-bulk-message-need-reload"
+					aria-live="assertive"
+				>
 				</div>
-
 				<div class="sui-progress-block">
 
 					<div class="sui-progress">
@@ -438,49 +345,29 @@ if ( ( ! isset( $queue[ $this->_membership_notice ] ) || ! isset( $queue[ $this-
 							<span style="width: 0%" class="js-bulk-actions-progress"></span>
 						</div>
 					</div>
-				</div>
+					</div>
 
-				<div class="sui-progress-state">
+					<div class="sui-progress-state">
 					<span class="js-bulk-actions-state"></span>
 				</div>
 
 			</div>
 
-
 			<div class="sui-hidden js-bulk-hash"
-					data-activate="<?php echo esc_attr( wp_create_nonce( 'project-activate' ) ); ?>"
-					data-deactivate="<?php echo esc_attr( wp_create_nonce( 'project-deactivate' ) ); ?>"
-					data-install="<?php echo esc_attr( wp_create_nonce( 'project-install' ) ); ?>"
-					data-delete="<?php echo esc_attr( wp_create_nonce( 'project-delete' ) ); ?>"
-					data-update="<?php echo esc_attr( wp_create_nonce( 'project-update' ) ); ?>"
+			data-activate="<?php echo esc_attr( wp_create_nonce( 'project-activate' ) ); ?>"
+			data-deactivate="<?php echo esc_attr( wp_create_nonce( 'project-deactivate' ) ); ?>"
+			data-install="<?php echo esc_attr( wp_create_nonce( 'project-install' ) ); ?>"
+			data-delete="<?php echo esc_attr( wp_create_nonce( 'project-delete' ) ); ?>"
+			data-update="<?php echo esc_attr( wp_create_nonce( 'project-update' ) ); ?>"
 			>
-
 			</div>
-
-			<div style="display:none">
-				<?php
-				/**
-				 * ROW FOR NOT INSTALLED PLUGIN LIST TABLE
-				 */
-				?>
-				<div class="js-available-plugin-header">
-					<table>
-						<tr class="dashui-tr-header">
-							<td><p><?php esc_html_e( 'Available', 'wpmudev' ); ?></p></td>
-							<td></td>
-							<td></td>
-						</tr>
-					</table>
-				</div>
-
-			</div>
-
 		</div>
-
 	</div>
+
 </div>
 
-<?php $this->render( 'sui/footer' );
+<?php
+$this->render( 'sui/footer' );
 
 if ( ! WPMUDEV_Dashboard::$upgrader->can_auto_install( 'plugin' ) ) {
 	$this->render( 'sui/popup-ftp-details' );

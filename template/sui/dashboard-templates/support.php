@@ -7,7 +7,7 @@
 
 $threads     = $member['forum']['support_threads'];
 $all_threads = array();
-$url_revoke  = wp_nonce_url( add_query_arg( 'action', 'remote-revoke', $urls->support_url . '#access' ), 'remote-revoke', 'hash' );
+$url_revoke  = wp_nonce_url( add_query_arg( 'action', 'remote-revoke', $urls->support_url . '#access' ), 'remote-revoke', 'hash' );		 	    		 				  	 	
 $url_extend  = wp_nonce_url( add_query_arg( 'action', 'remote-extend', $urls->support_url . '#access' ), 'remote-extend', 'hash' );
 
 foreach ( $threads as $thread ) {
@@ -81,29 +81,34 @@ foreach ( $threads as $thread ) {
 </div>
 		<?php if ( $staff_login->enabled ) {
 				?>
-		<div class="sui-notice dashui-notice-support" style="margin: 0px 30px 30px;">
-				<?php // translators: %s - human readable time period. ?>
-			<p><?php echo esc_html( sprintf( __( "You have an active support session. If you haven't already, please let support staff know you have granted access. It will remain active for another %s.", 'wpmudev' ), human_time_diff( $staff_login->expires ) ) ); ?></p>
-			<div class="sui-notice-buttons">
-				<a
-					href="<?php echo esc_url( $url_revoke ); ?>"
-					class="sui-button js-loading-link"
-				>
-					<span class="sui-loading-text">
-						<?php esc_html_e( 'END SESSION', 'wpmudev' ); ?>
-					</span>
-					<i class="sui-icon-loader sui-loading" aria-hidden="true"></i>
-				</a>
+		<div class="sui-notice sui-notice-info" style="margin: 0px 30px 30px;">
+					<div class="sui-notice-content">
+						<div class="sui-notice-message">
+							<span class="sui-notice-icon sui-icon-lock sui-md" aria-hidden="true"></span>
+								<?php // translators: %s - human readable time period. ?>
+							<p><?php echo esc_html( sprintf( __( "You have an active support session. If you haven't already, please let support staff know you have granted access. It will remain active for another %s.", 'wpmudev' ), human_time_diff( $staff_login->expires ) ) ); ?></p>
+							<div class="sui-notice-buttons">
+								<a
+									href="<?php echo esc_url( $url_revoke ); ?>"
+									class="sui-button js-loading-link"
+								>
+									<span class="sui-loading-text">
+										<?php esc_html_e( 'END SESSION', 'wpmudev' ); ?>
+									</span>
+									<i class="sui-icon-loader sui-loading" aria-hidden="true"></i>
+								</a>
 
-				<a href="<?php echo esc_url( $url_extend ); ?>"
-				class="sui-button sui-button-ghost sui-tooltip js-loading-link"
-				data-tooltip="<?php esc_attr_e( 'Add another 3 days of support access', 'wpmudev' ); ?>"
-					<?php echo( ! is_wpmudev_member() ? 'disabled="disabled"' : '' ); ?>>
-					<span class="sui-loading-text">
-					<?php esc_html_e( 'EXTEND', 'wpmudev' ); ?>
-					</span>
-					<i class="sui-icon-loader sui-loading" aria-hidden="true"></i>
-				</a>
+								<a href="<?php echo esc_url( $url_extend ); ?>"
+								class="sui-button sui-button-ghost sui-tooltip js-loading-link"
+								data-tooltip="<?php esc_attr_e( 'Add another 3 days of support access', 'wpmudev' ); ?>"
+									<?php echo( ! is_wpmudev_member() ? 'disabled="disabled"' : '' ); ?>>
+									<span class="sui-loading-text">
+									<?php esc_html_e( 'EXTEND', 'wpmudev' ); ?>
+									</span>
+									<i class="sui-icon-loader sui-loading" aria-hidden="true"></i>
+								</a>
+					</div>
+				</div>
 			</div>
 		</div>
 				<?php

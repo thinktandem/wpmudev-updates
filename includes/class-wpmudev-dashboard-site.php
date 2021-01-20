@@ -174,7 +174,7 @@ class WPMUDEV_Dashboard_Site {
 		}
 
 		// AUTO login ajax (no nonce, its called by our auto install server)
-		add_action( "wp_ajax_wdp-dashboard-autologin", array( $this, 'dashboard_autologin' ) );
+		add_action( 'wp_ajax_wdp-dashboard-autologin', array( $this, 'dashboard_autologin' ) );
 
 		$this->ajax_allowed_bypasses = array( 'changelog', 'analytics' );
 
@@ -223,17 +223,17 @@ class WPMUDEV_Dashboard_Site {
 		add_filter(
 			'delete_site_transient_update_themes',
 			array( $this, 'schedule_shutdown_refresh' )
-		); //runs when a theme is deleted
+		); // runs when a theme is deleted
 
-		//refresh after plugin/theme is activated/deactivated/deleted
+		// refresh after plugin/theme is activated/deactivated/deleted
 		add_action( 'activated_plugin', array( $this, 'schedule_shutdown_refresh' ) );
 		add_action( 'deactivated_plugin', array( $this, 'schedule_shutdown_refresh' ) );
 		add_action( 'deleted_plugin', array( $this, 'schedule_shutdown_refresh' ) );
 		if ( is_multisite() ) {
-			add_action( 'update_site_option_allowedthemes', array( $this, 'schedule_shutdown_refresh' ) ); //network enable/disable
+			add_action( 'update_site_option_allowedthemes', array( $this, 'schedule_shutdown_refresh' ) ); // network enable/disable
 		}
 		if ( is_main_site() ) {
-			add_action( 'after_switch_theme', array( $this, 'schedule_shutdown_refresh' ) ); //per site activation
+			add_action( 'after_switch_theme', array( $this, 'schedule_shutdown_refresh' ) ); // per site activation
 		}
 
 		add_action( 'shutdown', array( $this, 'shutdown_refresh' ) );
@@ -342,7 +342,7 @@ class WPMUDEV_Dashboard_Site {
 
 		add_filter(
 			'ajax_query_attachments_args',
-			array( $this, 'user_can_edit_branding_image')
+			array( $this, 'user_can_edit_branding_image' )
 		);
 
 	}
@@ -538,14 +538,14 @@ class WPMUDEV_Dashboard_Site {
 
 		// Do nothing if either action or nonce is missing.
 		if ( empty( $_REQUEST['action'] ) ) {
-//			if ( isset( $_GET['success-action'] ) || isset( $_GET['failed-action'] ) ) {
-//				$url = esc_url_raw(
-//					remove_query_arg( array( 'success-action', 'failed-action' ) )
-//				);
-//				header( 'X-Redirect-From: SITE process_actions top' );
-//				wp_safe_redirect( $url );
-//				exit;
-//			}
+			// if ( isset( $_GET['success-action'] ) || isset( $_GET['failed-action'] ) ) {
+			// $url = esc_url_raw(
+			// remove_query_arg( array( 'success-action', 'failed-action' ) )
+			// );
+			// header( 'X-Redirect-From: SITE process_actions top' );
+			// wp_safe_redirect( $url );
+			// exit;
+			// }
 
 			return;
 		}
@@ -708,33 +708,33 @@ class WPMUDEV_Dashboard_Site {
 					case 'settings':
 						$setting_data = $_REQUEST; // wpcs CSRF ok. already validated on process_ajax
 						$options_map  = array(
-							'branding_enabled'  => array(
+							'branding_enabled'         => array(
 								'option_name' => 'whitelabel_branding_enabled',
 								'default'     => false,
 							),
-							'branding_enabled_subsite'  => array(
+							'branding_enabled_subsite' => array(
 								'option_name'   => 'branding_enabled_subsite',
 								'expected_type' => 'boolean',
 								'default'       => false,
 							),
-							'branding_image'    => array(
+							'branding_image'           => array(
 								'option_name' => 'whitelabel_branding_image',
 								'default'     => '',
 							),
-							'branding_image_id'    => array(
+							'branding_image_id'        => array(
 								'option_name' => 'whitelabel_branding_image_id',
 								'default'     => '',
 
 							),
-							'footer_enabled'    => array(
+							'footer_enabled'           => array(
 								'option_name' => 'whitelabel_footer_enabled',
 								'default'     => false,
 							),
-							'footer_text'       => array(
+							'footer_text'              => array(
 								'option_name' => 'whitelabel_footer_text',
 								'default'     => '',
 							),
-							'doc_links_enabled' => array(
+							'doc_links_enabled'        => array(
 								'option_name' => 'whitelabel_doc_links_enabled',
 								'default'     => false,
 							),
@@ -754,7 +754,6 @@ class WPMUDEV_Dashboard_Site {
 							}
 
 							$this->set_option( $value['option_name'], $option_value );
-
 
 						}
 						// un silent message
@@ -801,28 +800,32 @@ class WPMUDEV_Dashboard_Site {
 			// setup translation updates
 			case 'translation-setup':
 				$locale = empty( $_REQUEST['selected_locale'] ) ? 'en_US' : $_REQUEST['selected_locale'];
+
 				$enable_auto_translation = isset( $_REQUEST['enable_auto_translation'] ) ? absint( $_REQUEST['enable_auto_translation'] ) : 0;
+
 				$this->set_option( 'enable_auto_translation', $enable_auto_translation );
+
 				$prev_locale = WPMUDEV_Dashboard::$site->get_option( 'translation_locale' );
+
 				$this->set_option( 'translation_locale', $locale );
 
-				//hub-sync to check prev locale
+				// hub-sync to check prev locale
 				if ( $prev_locale !== $locale ) {
 					// Also, force a hub-sync, since the translation setting changed.
 					WPMUDEV_Dashboard::$api->calculate_translation_upgrades( true );
 				}
-
+				$success = true;
 				break;
 
 			// setup autoupdate dashboard
-			case 'autoupdate-dashboard' :
+			case 'autoupdate-dashboard':
 				$status = isset( $_REQUEST['status'] ) ? $_REQUEST['status'] : ''; // wpcs CSRF ok. already validated on process_ajax
 				switch ( $status ) {
 					case 'settings':
 						$auto_update = isset( $_REQUEST['autoupdate_dashboard'] ) ? filter_var( $_REQUEST['autoupdate_dashboard'], FILTER_VALIDATE_BOOLEAN ) : false;
 						$this->set_option( 'autoupdate_dashboard', $auto_update );
 
-						$enable_sso = isset( $_REQUEST['enable_sso'] ) ? absint( $_REQUEST['enable_sso'] ) : 0;
+						$enable_sso   = isset( $_REQUEST['enable_sso'] ) ? absint( $_REQUEST['enable_sso'] ) : 0;
 						$previous_sso = $this->get_option( 'enable_sso', true );
 
 						// Register the user to be logged in for SSO, only if the SSO was just enabled.
@@ -983,7 +986,7 @@ class WPMUDEV_Dashboard_Site {
 
 				case 'project-activate':
 					if ( $pid ) {
-						$local      = $this->get_cached_projects( $pid );
+						$local = $this->get_cached_projects( $pid );
 						if ( empty( $local ) ) {
 							$this->send_json_error( array( 'message' => __( 'Not installed' ) ) );
 						}
@@ -1011,8 +1014,7 @@ class WPMUDEV_Dashboard_Site {
 					}
 					break;
 				case 'translation-update':
-
-					//we work with slug on translation update.
+					// we work with slug on translation update.
 					$pid = $_REQUEST['slug'];
 					if ( $pid ) {
 						$success = WPMUDEV_Dashboard::$upgrader->upgrade_translation( $pid );
@@ -1031,7 +1033,7 @@ class WPMUDEV_Dashboard_Site {
 
 				case 'project-deactivate':
 					if ( $pid ) {
-						$local      = $this->get_cached_projects( $pid );
+						$local = $this->get_cached_projects( $pid );
 						if ( empty( $local ) ) {
 							$this->send_json_error( array( 'message' => __( 'Not installed' ) ) );
 						}
@@ -1163,9 +1165,9 @@ class WPMUDEV_Dashboard_Site {
 						switch ( $action ) {
 							case 'save-setting-bool':
 								if ( 'true' == $value
-								     || '1' == $value
-								     || 'on' == $value
-								     || 'yes' == $value
+									 || '1' == $value
+									 || 'on' == $value
+									 || 'yes' == $value
 								) {
 									$value = true;
 								} else {
@@ -1291,7 +1293,6 @@ class WPMUDEV_Dashboard_Site {
 								// Since we auto install, we need to associate SSO with the correct user.
 								WPMUDEV_Dashboard::$site->set_option( 'sso_userid', $current_user->ID );
 							}
-
 						}
 						$installed_free_projects = WPMUDEV_Dashboard::$site->get_installed_free_projects();
 						$url                     = add_query_arg(
@@ -1308,7 +1309,7 @@ class WPMUDEV_Dashboard_Site {
 
 						$this->send_json_success(
 							array(
-								'redirect' => $url
+								'redirect' => $url,
 							)
 						);
 					}
@@ -1326,7 +1327,7 @@ class WPMUDEV_Dashboard_Site {
 					$url = WPMUDEV_Dashboard::$ui->page_urls->dashboard_url;
 					if ( $pid ) {
 						$pid = implode( ',', $pid );
-						$url  = add_query_arg(
+						$url = add_query_arg(
 							array( 'updated-plugins' => $pid ),
 							$url
 						);
@@ -1373,8 +1374,11 @@ class WPMUDEV_Dashboard_Site {
 
 				case 'wdpsso_step1':
 					$redirect = isset( $_REQUEST['redirect'] ) ? urlencode( $_REQUEST['redirect'] ) : '';
-					$nonce = isset( $_REQUEST['nonce'] ) ? $_REQUEST['nonce'] : '';
-					WPMUDEV_Dashboard::$api->authenticate_sso_access_step1( $redirect, $nonce );
+					$nonce    = isset( $_REQUEST['nonce'] ) ? $_REQUEST['nonce'] : '';
+					$jwttoken = isset( $_REQUEST['jwttoken'] ) ? $_REQUEST['jwttoken'] : '';
+					$apikey   = isset( $_REQUEST['apikey'] ) ? $_REQUEST['apikey'] : '';
+					$hubteam  = isset( $_REQUEST['hubteam'] ) ? $_REQUEST['hubteam'] : '';
+					WPMUDEV_Dashboard::$api->authenticate_sso_access_step1( $redirect, $nonce, $jwttoken, $apikey, $hubteam );
 					break;
 
 				case 'wdpsso_step2':
@@ -1407,7 +1411,7 @@ class WPMUDEV_Dashboard_Site {
 	 */
 	public function ajax_connect() {
 
-		//check permissions
+		// check permissions
 		if ( ! current_user_can( 'manage_network_options' ) ) {
 			$this->send_json_error( 'No permissions' );
 		}
@@ -1752,7 +1756,7 @@ class WPMUDEV_Dashboard_Site {
 			self::$_cache_project_info = array();
 		}
 
-		//build data if it's not cached or we need changelog and the changelog is missing from cache
+		// build data if it's not cached or we need changelog and the changelog is missing from cache
 		if ( ! isset( self::$_cache_project_info[ $pid ] ) || ( $fetch_full && ! count( self::$_cache_project_info[ $pid ]->changelog ) ) ) {
 			$res = (object) array(
 				'pid'                 => $pid,
@@ -1812,7 +1816,7 @@ class WPMUDEV_Dashboard_Site {
 			$system_projects = WPMUDEV_Dashboard::$site->get_system_projects();
 
 			// General details.
-			$res->type           = ( 'theme' == $remote['type'] ? 'theme' : 'plugin' );
+			$res->type           = ( 'theme' === $remote['type'] ? 'theme' : 'plugin' );
 			$res->name           = $remote['name'];
 			$res->info           = strip_tags( $remote['short_description'] );
 			$res->version_latest = $remote['version'];
@@ -1842,13 +1846,13 @@ class WPMUDEV_Dashboard_Site {
 
 			if ( 'theme' == $res->type ) {
 				$res->need_upfront = $this->is_upfront_theme( $pid );
-			} elseif ( $this->id_upfront_builder == $pid ) { //the upfront builder plugin requires Upfront theme
+			} elseif ( $this->id_upfront_builder == $pid ) { // the upfront builder plugin requires Upfront theme
 				$res->need_upfront = true;
 			}
 
 			$res->is_installed = WPMUDEV_Dashboard::$upgrader->is_project_installed( $pid );
 
-			$res->can_autoupdate = ( '1' == $remote['autoupdate'] ); //this has nothing to do with permissions, just project capability
+			$res->can_autoupdate = ( '1' == $remote['autoupdate'] ); // this has nothing to do with permissions, just project capability
 			$res->is_compatible  = WPMUDEV_Dashboard::$upgrader->is_project_compatible( $pid, $incompatible_reason );
 
 			// Plugin can be active, even if not licensed:
@@ -1858,9 +1862,9 @@ class WPMUDEV_Dashboard_Site {
 				if ( ! empty( $local['name'] ) ) {
 					$res->name = $local['name'];
 				}
-				if ( 'muplugin' == $local['type'] ) {
+				if ( 'muplugin' === $local['type'] ) {
 					$res->special = $local['type'];
-				} elseif ( 'dropin' == $local['type'] ) {
+				} elseif ( 'dropin' === $local['type'] ) {
 					$res->special = $local['type'];
 				}
 				$res->path              = $local['path'];
@@ -1869,7 +1873,7 @@ class WPMUDEV_Dashboard_Site {
 				$res->version_installed = $local['version'];
 				$res->has_update        = WPMUDEV_Dashboard::$upgrader->is_update_available( $pid );
 
-				if ( 'plugin' == $res->type ) {
+				if ( 'plugin' === $res->type ) {
 					if ( ! function_exists( 'is_plugin_active' ) ) {
 						include_once ABSPATH . 'wp-admin/includes/plugin.php';
 					}
@@ -1879,12 +1883,12 @@ class WPMUDEV_Dashboard_Site {
 					} else {
 						$res->is_active = is_plugin_active( $res->filename );
 					}
-				} elseif ( 'theme' == $res->type ) {
+				} elseif ( 'theme' === $res->type ) {
 					if ( $is_network_admin ) {
 						$allowed_themes = get_site_option( 'allowedthemes' );
 						$res->is_active = ! empty( $allowed_themes[ $res->slug ] );
 					} else {
-						$res->is_active = ( $res->slug == get_option( 'stylesheet' ) );
+						$res->is_active = get_option( 'stylesheet' ) === $res->slug;
 					}
 				}
 			}
@@ -1894,14 +1898,14 @@ class WPMUDEV_Dashboard_Site {
 			} elseif ( $res->is_installed ) {
 				// Installed projects are always visible.
 				$res->is_hidden = false;
-			} elseif ( 'theme' == $res->type && $this->is_legacy_theme( $pid ) ) {
+			} elseif ( 'theme' === $res->type && $this->is_legacy_theme( $pid ) ) {
 				// Hide all non-installed legacy themes.
 				$res->is_hidden = true;
 			} else {
 				// Project is not installed, then use flag from API.
 				$res->is_hidden = ! $remote['active'];
 			}
-			if ( 'plugin' == $res->type ) {
+			if ( 'plugin' === $res->type ) {
 				if ( $res->special ) {
 					// MU-Plugins and Dropins cannot be (de)activated.
 					$res->can_activate = false;
@@ -1910,7 +1914,7 @@ class WPMUDEV_Dashboard_Site {
 				} else {
 					$res->can_activate = current_user_can( 'activate_plugins' );
 				}
-			} elseif ( 'theme' == $res->type ) {
+			} elseif ( 'theme' === $res->type ) {
 				if ( $is_network_admin ) {
 					$res->can_activate = current_user_can( 'manage_network_themes' );
 				} else {
@@ -2016,6 +2020,9 @@ class WPMUDEV_Dashboard_Site {
 			}
 			if ( 51 === $pid ) {
 				$res->free_version_slug = 'beehive-analytics/beehive-analytics.php';
+			}
+			if ( 2097296 === $pid ) {
+				$res->free_version_slug = 'forminator/forminator.php';
 			}
 			// Temporary fix end.
 
@@ -2507,8 +2514,8 @@ class WPMUDEV_Dashboard_Site {
 	 * @return bool
 	 */
 	public function user_can_install( $project_id, $only_license = false ) {
-		$data            = WPMUDEV_Dashboard::$api->get_projects_data();
-		$membership_type = WPMUDEV_Dashboard::$api->get_membership_type();
+		$data              = WPMUDEV_Dashboard::$api->get_projects_data();
+		$membership_type   = WPMUDEV_Dashboard::$api->get_membership_type();
 		$licensed_projects = WPMUDEV_Dashboard::$api->get_membership_projects();
 
 		if ( 'unit' === $membership_type ) {
@@ -2702,8 +2709,8 @@ class WPMUDEV_Dashboard_Site {
 		$md5_fs = md5( json_encode( $local_projects ) );
 
 		if ( 'remote' == $check || $md5_db != $md5_fs ) {
-			self::$_cache_themeupdates  = false;
-			self::$_cache_pluginupdates = false;
+			self::$_cache_themeupdates       = false;
+			self::$_cache_pluginupdates      = false;
 			self::$_cache_translationupdates = false;
 
 			$this->set_transient(
@@ -2713,9 +2720,9 @@ class WPMUDEV_Dashboard_Site {
 			);
 			$this->set_option( 'updates_available', false );
 
-			//check if is manual check for updates
-			if( isset( $_REQUEST['action'] ) && 'check-updates' === $_REQUEST['action'] ){
-				//force hubsync
+			// check if is manual check for updates
+			if ( isset( $_REQUEST['action'] ) && 'check-updates' === $_REQUEST['action'] ) {
+				// force hubsync
 				$full_sync = true;
 			} else {
 				$full_sync = false;
@@ -2967,7 +2974,6 @@ class WPMUDEV_Dashboard_Site {
 			$projects[ $this->id_farm133_themes ] = $farm133_project;
 		}
 
-
 		return $projects;
 	}
 
@@ -3202,14 +3208,14 @@ class WPMUDEV_Dashboard_Site {
 					unset( $value->no_update[ $update['filename'] ] );
 				}
 
-				//since 4.8.0 also remove our projects from translations first.
+				// since 4.8.0 also remove our projects from translations first.
 				// if ( ! self::$_cache_translationupdates && ! empty( $value->translations ) ) {
-				// 	foreach ( $value->translations as $key => $translation ) {
-				// 		$slug = dirname( plugin_basename( $update['filename'] ) );
-				// 		if ( isset( $translation['slug'] ) && $slug === $translation['slug'] ) {
-				// 			unset( $value->translations[ $key ] );
-				// 		}
-				// 	}
+				// foreach ( $value->translations as $key => $translation ) {
+				// $slug = dirname( plugin_basename( $update['filename'] ) );
+				// if ( isset( $translation['slug'] ) && $slug === $translation['slug'] ) {
+				// unset( $value->translations[ $key ] );
+				// }
+				// }
 				// }
 			}
 
@@ -3233,7 +3239,7 @@ class WPMUDEV_Dashboard_Site {
 					$package    = '';
 					$autoupdate = false;
 					$local      = $this->get_cached_projects( $id );
-					//$last_changes = $plugin['changelog'];
+					// $last_changes = $plugin['changelog'];
 
 					if ( '1' == $plugin['autoupdate'] && WPMUDEV_Dashboard::$api->has_key() ) {
 						$package = WPMUDEV_Dashboard::$api->rest_url_auth( 'download/' . $id );
@@ -3265,13 +3271,13 @@ class WPMUDEV_Dashboard_Site {
 			if ( ! self::$_cache_translationupdates ) {
 				$translation_updates = WPMUDEV_Dashboard::$api->calculate_translation_upgrades();
 				if ( ! empty( $translation_updates ) ) {
-                    if ( isset( $value->translation ) ) {
-                        $value->translations = array_merge( $value->translations, $translation_updates );
-                    } else {
-                        $value->translations = $translation_updates;
-                    }
+					if ( isset( $value->translation ) ) {
+						$value->translations = array_merge( $value->translations, $translation_updates );
+					} else {
+						$value->translations = $translation_updates;
+					}
 
-				    self::$_cache_translationupdates = $value->translations;
+					self::$_cache_translationupdates = $value->translations;
 				}
 			}
 
@@ -3337,7 +3343,7 @@ class WPMUDEV_Dashboard_Site {
 
 					// Build theme listing.
 					$object                = array();
-					$object['pid']         = $id; //we add this so we can detect it later when wp core autoupdater triggers
+					$object['pid']         = $id; // we add this so we can detect it later when wp core autoupdater triggers
 					$object['theme']       = $theme_slug;
 					$object['new_version'] = $theme['new_version'];
 					$object['url']         = add_query_arg(
@@ -3419,7 +3425,7 @@ class WPMUDEV_Dashboard_Site {
 				// collect author stats on single post views, excluding pages.
 				if ( is_single() ) {
 					echo '	_paq.push([\'setCustomDimension\', 1, \'{"ID":' . get_the_author_meta( 'ID' ) . ',"name":"' . esc_js( get_the_author_meta( 'display_name' ) ) . '","avatar":"'
-					     . md5( get_the_author_meta( 'user_email' ) ) . '"}\']);' . PHP_EOL;
+						 . md5( get_the_author_meta( 'user_email' ) ) . '"}\']);' . PHP_EOL;
 				}
 				?>
 				_paq.push(['trackPageView']);
@@ -3455,11 +3461,11 @@ class WPMUDEV_Dashboard_Site {
 	 * @return bool
 	 */
 	public function user_can_analytics() {
-		$cap  = "level_10"; // default to administrator
+		$cap  = 'level_10'; // default to administrator
 		$role = get_role( WPMUDEV_Dashboard::$site->get_option( 'analytics_role' ) );
 		if ( is_object( $role ) ) {
 			for ( $i = 0; $i <= 12; $i ++ ) { // admin is 10, but we'll go a little past it just in case!
-				if ( isset( $role->capabilities["level_$i"] ) && $role->capabilities["level_$i"] ) {
+				if ( isset( $role->capabilities[ "level_$i" ] ) && $role->capabilities[ "level_$i" ] ) {
 					$cap = "level_$i";
 				}
 			}
@@ -3528,41 +3534,41 @@ class WPMUDEV_Dashboard_Site {
 	public function get_whitelabel_settings( $whitelabel_settings_structure = array() ) {
 		// default structure
 		$default_structure = array(
-			'enabled'           => array(
+			'enabled'                  => array(
 				'option_name'   => 'whitelabel_enabled', // option_name to be retrieved
 				'expected_type' => 'boolean',
 				'default'       => false, // default value when, option is non-exist or expected_type not fulfilled
 			),
-			'branding_enabled'  => array(
+			'branding_enabled'         => array(
 				'option_name'   => 'whitelabel_branding_enabled',
 				'expected_type' => 'boolean',
 				'default'       => false,
 			),
-			'branding_enabled_subsite'  => array(
+			'branding_enabled_subsite' => array(
 				'option_name'   => 'branding_enabled_subsite',
 				'expected_type' => 'boolean',
 				'default'       => false,
 			),
-			'branding_image'    => array(
+			'branding_image'           => array(
 				'option_name'   => 'whitelabel_branding_image',
 				'expected_type' => 'string',
 				'default'       => '',
 			),
-			'branding_image_id'    => array(
-				'option_name'   => 'whitelabel_branding_image_id',
-				'default'       => '',
+			'branding_image_id'        => array(
+				'option_name' => 'whitelabel_branding_image_id',
+				'default'     => '',
 			),
-			'footer_enabled'    => array(
+			'footer_enabled'           => array(
 				'option_name'   => 'whitelabel_footer_enabled',
 				'expected_type' => 'boolean',
 				'default'       => false,
 			),
-			'footer_text'       => array(
+			'footer_text'              => array(
 				'option_name'   => 'whitelabel_footer_text',
 				'expected_type' => 'string',
 				'default'       => '',
 			),
-			'doc_links_enabled' => array(
+			'doc_links_enabled'        => array(
 				'option_name'   => 'whitelabel_doc_links_enabled',
 				'expected_type' => 'boolean',
 				'default'       => false,
@@ -3622,12 +3628,11 @@ class WPMUDEV_Dashboard_Site {
 			$default_branding['hide_branding'] = $whitelabel_settings['branding_enabled'];
 			if ( $whitelabel_settings['branding_enabled'] ) {
 
-				if( is_multisite() && ! is_network_admin() && 1 === absint( $whitelabel_settings['branding_enabled_subsite'] ) ){
-					if( has_custom_logo() ){
+				if ( is_multisite() && ! is_network_admin() && 1 === absint( $whitelabel_settings['branding_enabled_subsite'] ) ) {
+					if ( has_custom_logo() ) {
 						$custom_logo_id = get_theme_mod( 'custom_logo' );
-						$image = wp_get_attachment_image_url( $custom_logo_id, 'full' );
+						$image          = wp_get_attachment_image_url( $custom_logo_id, 'full' );
 					}
-
 				} else {
 					$image = $whitelabel_settings['branding_image'];
 				}
@@ -3787,12 +3792,11 @@ class WPMUDEV_Dashboard_Site {
 						if ( ! is_array( $options[ $key ] ) ) {
 							// this will check current value, then return appropriate array value
 							if ( empty( $options[ $key ] ) ) {
-								//make it compatible with empty array
+								// make it compatible with empty array
 								$options[ $key ] = array();
 							} else {
 								$options[ $key ] = (array) $options[ $key ];
 							}
-
 						}
 						break;
 					default:
@@ -3949,7 +3953,7 @@ class WPMUDEV_Dashboard_Site {
 			$doing_ajax = defined( 'DOING_AJAX' ) && DOING_AJAX;
 		}
 
-		$pid           = (int) $project_id;
+		$pid          = (int) $project_id;
 		$project_info = $this->get_project_info( $pid );
 		if ( ! isset( $project_info->pid ) || $pid !== $project_info->pid ) {
 			if ( $doing_ajax ) {
@@ -3983,6 +3987,13 @@ class WPMUDEV_Dashboard_Site {
 				}
 			}
 		}
+		// Forminator is special case, this might apply to other plugins as well when free and pro merge.
+		$forminator_pid = 2097296;
+		if ( $forminator_pid === $pid && $is_free_installed ) {
+			// Move free forminator to another directory.
+			rename( WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . 'forminator', WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . 'forminator-free' );
+		}
+		// End Forminator special case.
 
 		$local = WPMUDEV_Dashboard::$site->get_cached_projects( $pid );
 		// means its not installed yet
@@ -3993,6 +4004,12 @@ class WPMUDEV_Dashboard_Site {
 				$err = WPMUDEV_Dashboard::$upgrader->get_error();
 				if ( $doing_ajax ) {
 					$this->send_json_error( $err );
+				}
+
+				// Undo Forminator free move.
+				if ( $forminator_pid === $pid && $is_free_installed ) {
+					// Move free forminator to another directory.
+					rename( WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . 'forminator-free', WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . 'forminator' );
 				}
 
 				return false;
@@ -4059,11 +4076,15 @@ class WPMUDEV_Dashboard_Site {
 			}
 		}
 
-
 		if ( $is_free_installed && $is_pro_success_installed ) {
 			// DELETE FREE Plugin
 			$skip_uninstall_hook = true;
-			$delete_free         = WPMUDEV_Dashboard::$upgrader->delete_plugin( $free_filename, $skip_uninstall_hook );
+			$delete_free         = true;
+			if ( $forminator_pid === $pid ) {
+				$this->delete_plugin_directory( WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . 'forminator-free' );
+			} else {
+				$delete_free = WPMUDEV_Dashboard::$upgrader->delete_plugin( $free_filename, $skip_uninstall_hook );
+			}
 			if ( ! $delete_free ) {
 				$err = WPMUDEV_Dashboard::$upgrader->get_error();
 				if ( $doing_ajax ) {
@@ -4091,14 +4112,17 @@ class WPMUDEV_Dashboard_Site {
 		// ensure got fresh data
 		WPMUDEV_Dashboard::$api->refresh_projects_data();
 
-		$projects                = WPMUDEV_Dashboard::$api->get_projects_data();
-		$projects                = isset( $projects['projects'] ) ? $projects['projects'] : array();
+		$projects = WPMUDEV_Dashboard::$api->get_projects_data();
+		$projects = isset( $projects['projects'] ) ? $projects['projects'] : array();
 		// Temporary fix for Branda and Beehive missing or having invalid free version slugs.
 		if ( isset( $projects[9135] ) ) {
 			$projects[9135]['free_version_slug'] = 'branda-white-labeling/ultimate-branding.php';
 		}
 		if ( isset( $projects[51] ) ) {
 			$projects[51]['free_version_slug'] = 'beehive-analytics/beehive-analytics.php';
+		}
+		if ( isset( $projects[2097296] ) ) {
+			$projects[2097296]['free_version_slug'] = 'forminator/forminator.php';
 		}
 		// Temporary fix end.
 
@@ -4166,9 +4190,9 @@ class WPMUDEV_Dashboard_Site {
 		WPMUDEV_Dashboard::$api->set_key( $key );
 
 		// When we auto install, we will also have the hub_sso_status param available to enable/disable SSO.
-		if( isset( $_REQUEST['hub_sso_status'] ) && ! is_null( $_REQUEST['hub_sso_status'] ) ){
+		if ( isset( $_REQUEST['hub_sso_status'] ) && ! is_null( $_REQUEST['hub_sso_status'] ) ) {
 			$this->set_option( 'enable_sso', absint( $_REQUEST['hub_sso_status'] ) );
-			if( 1 === absint( $_REQUEST['hub_sso_status'] ) ) {
+			if ( 1 === absint( $_REQUEST['hub_sso_status'] ) ) {
 				$this->set_option( 'sso_userid', get_current_user_id() );
 			}
 		}
@@ -4248,7 +4272,7 @@ class WPMUDEV_Dashboard_Site {
 		if ( isset( $_GET['wdp_sso_fail'] ) ) {
 			if ( 'sso_disabled' === $_GET['wdp_sso_fail'] ) {
 				$message = '<div id="login_error">Couldn\'t log in with the Hub SSO because SSO is disabled in the WPMU DEV Dashboard.</div>';
-			} else if ( 'no_logged_in_dashboard_user' === $_GET['wdp_sso_fail'] ) {
+			} elseif ( 'no_logged_in_dashboard_user' === $_GET['wdp_sso_fail'] ) {
 				$message = '<div id="login_error">Couldn\'t log in with the Hub SSO because you are not logged into the WPMU DEV Dashboard.</div>';
 			}
 		}
@@ -4278,14 +4302,14 @@ class WPMUDEV_Dashboard_Site {
 		}
 
 		// Bail if SSO is already used.
-		if ( false !== WPMUDEV_Dashboard::$site->get_option( 'enable_sso' )  ) {
+		if ( false !== WPMUDEV_Dashboard::$site->get_option( 'enable_sso' ) ) {
 			// First, dismiss the SSO notice.
 			$queue = WPMUDEV_Dashboard::$site->get_option( 'notifications' );
-			if( isset( $queue[ $this->_sso_notice_id ] ) ){
+			if ( isset( $queue[ $this->_sso_notice_id ] ) ) {
 				if ( ! $queue[ $this->_sso_notice_id ]['dismissed'] ) {
 					// Dont write to db over and over again.
 					$queue[ $this->_sso_notice_id ]['dismissed'] = true;
-					$queue = WPMUDEV_Dashboard::$site->set_option( 'notifications', $queue );
+					$queue                                       = WPMUDEV_Dashboard::$site->set_option( 'notifications', $queue );
 				}
 			}
 			return false;
@@ -4294,7 +4318,7 @@ class WPMUDEV_Dashboard_Site {
 		$id = $this->_sso_notice_id;
 
 		$current_user = wp_get_current_user();
-		$message = sprintf(
+		$message      = sprintf(
 			'<p>%s, %s</p>',
 			esc_html( $current_user->user_login ),
 			__( "you can now enable direct login to all your sites from The WPMU DEV Hub. To do this we don't store any passwords or usernames, you just need to visit the Dashboard's Settings area and check 'Enable Single Sign-on for this website'.", 'wpmudev' )
@@ -4316,11 +4340,11 @@ class WPMUDEV_Dashboard_Site {
 		// Enqueue returns false if already enqueued.
 		WPMUDEV_Dashboard::$notice->enqueue( $id, $message, true );
 
-		//filter for hiding notice on certain screens.
+		// filter for hiding notice on certain screens.
 		$_omit_screens = apply_filters( 'wpmudev_hide_sso_on_screens', array( 'dashboard', 'dashboard-network' ) );
 
 		// Force message setup for sso on other admin pages.
-		if ( ! in_array( get_current_screen()->id, $_omit_screens ) ){
+		if ( ! in_array( get_current_screen()->id, $_omit_screens ) ) {
 			WPMUDEV_Dashboard::$notice->setup_message();
 		}
 	}
@@ -4330,11 +4354,11 @@ class WPMUDEV_Dashboard_Site {
 	 *
 	 * @since  4.7.3.2
 	 *
-	 * @param $sui_template 	bool 	Wether to use SUI notice or default WP notice.
-	 * @param $data 			array 	Notice data
+	 * @param $sui_template     bool    Wether to use SUI notice or default WP notice.
+	 * @param $data             array   Notice data
 	 */
-	public function sso_notice_template( $sui_template, $data ){
-		if( isset( $data['id'] ) && $this->_sso_notice_id === $data['id'] ){
+	public function sso_notice_template( $sui_template, $data ) {
+		if ( isset( $data['id'] ) && $this->_sso_notice_id === $data['id'] ) {
 			$sui_template = false;
 		}
 		return $sui_template;
@@ -4345,20 +4369,34 @@ class WPMUDEV_Dashboard_Site {
 	 *
 	 * @since  4.7.3.2
 	 *
-	 * @param $data 			array 	Notice data
+	 * @param $data             array   Notice data
 	 */
-	public function hide_sso_notice_on_subsite( $show_notice, $data ){
+	public function hide_sso_notice_on_subsite( $show_notice, $data ) {
 
 		// if not multisite return
 		if ( ! is_multisite() ) {
 			return $show_notice;
 		}
 
-		if( ! is_network_admin() && isset( $data['id'] ) && $this->_sso_notice_id === $data['id'] ){
+		if ( ! is_network_admin() && isset( $data['id'] ) && $this->_sso_notice_id === $data['id'] ) {
 			$show_notice = false;
 		}
 
 		return $show_notice;
+	}
+
+	/**
+	 * Delete plugin directory recursively. Only use for removing free plugin directory if
+	 * Pro and Free plugin directories are the same.
+	 *
+	 * @param string $path - plugin directory absolute path.
+	 */
+	private function delete_plugin_directory( $path ) {
+		$files = glob( $path . '/*' );
+		foreach ( $files as $file ) {
+			is_dir( $file ) ? $this->delete_plugin_directory( $file ) : unlink( $file );
+		}
+		rmdir( $path );
 	}
 }
 
@@ -4387,7 +4425,7 @@ function is_wpmudev_member() {
  * @return bool|int
  */
 function is_wpmudev_single_member( $pid = false ) {
-	$type = WPMUDEV_Dashboard::$api->get_membership_type();
+	$type                = WPMUDEV_Dashboard::$api->get_membership_type();
 	$licensed_project_id = WPMUDEV_Dashboard::$api->get_membership_projects();
 
 	if ( 'single' == $type ) {
@@ -4411,7 +4449,6 @@ if ( ! function_exists( 'wpmudev_whitelabel_sui_plugins_branding' ) ) {
 	 * Try to utilize `WPMUDEV_Dashboard::` if its needed
 	 *
 	 * @since 4.6
-	 *
 	 */
 	function wpmudev_whitelabel_sui_plugins_branding() {
 		$whitelabel_settings = WPMUDEV_Dashboard::$site->get_whitelabel_settings();
@@ -4419,14 +4456,13 @@ if ( ! function_exists( 'wpmudev_whitelabel_sui_plugins_branding' ) ) {
 		$output = '';
 		if ( $whitelabel_settings['branding_enabled'] ) {
 
-			if( is_multisite() && ! is_network_admin() && $whitelabel_settings['branding_enabled_subsite'] ){
+			if ( is_multisite() && ! is_network_admin() && $whitelabel_settings['branding_enabled_subsite'] ) {
 
-				if( has_custom_logo() ){
+				if ( has_custom_logo() ) {
 					$custom_logo_id = get_theme_mod( 'custom_logo' );
-					$image = wp_get_attachment_image_src( $custom_logo_id , 'full' );
-					$image = $image[0];
+					$image          = wp_get_attachment_image_src( $custom_logo_id, 'full' );
+					$image          = $image[0];
 				}
-
 			} else {
 				$image = $whitelabel_settings['branding_image'];
 			}
@@ -4436,9 +4472,9 @@ if ( ! function_exists( 'wpmudev_whitelabel_sui_plugins_branding' ) ) {
 			?>
 			<style>
 				#wpbody-content .sui-wrap div.sui-box.sui-summary {
-					background-image: url(<?php echo esc_url($image)?>);
+					background-image: url(<?php echo esc_url( $image ); ?>);
 				}
-				<?php if (empty($image)):?>
+				<?php if ( empty( $image ) ) : ?>
 				#wpbody-content .sui-wrap div.sui-box.sui-summary .sui-summary-image-space {
 					display: none;
 				}
@@ -4453,7 +4489,7 @@ if ( ! function_exists( 'wpmudev_whitelabel_sui_plugins_branding' ) ) {
 						width: 100%;
 					}
 				}
-				<?php else:?>
+				<?php else : ?>
 				#wpbody-content .sui-wrap div.sui-box.sui-summary {
 					background-position: 3% 50%;
 				}
@@ -4463,7 +4499,7 @@ if ( ! function_exists( 'wpmudev_whitelabel_sui_plugins_branding' ) ) {
 						background-image: none;
 					}
 				}
-				<?php endif;?>
+				<?php endif; ?>
 			</style>
 			<script type="text/javascript">
 				if (typeof window.jQuery !== "undefined") {
@@ -4478,7 +4514,6 @@ if ( ! function_exists( 'wpmudev_whitelabel_sui_plugins_branding' ) ) {
 			<?php
 			$output = ob_get_clean();
 		}
-
 
 		/**
 		 * Filter output SUI whitelabel-ing
@@ -4499,7 +4534,6 @@ if ( ! function_exists( 'wpmudev_whitelabel_sui_plugins_footer' ) ) {
 	 * Try to utilize `WPMUDEV_Dashboard::` if its needed
 	 *
 	 * @since 4.6
-	 *
 	 */
 	function wpmudev_whitelabel_sui_plugins_footer() {
 		$whitelabel_settings = WPMUDEV_Dashboard::$site->get_whitelabel_settings();
@@ -4525,7 +4559,7 @@ if ( ! function_exists( 'wpmudev_whitelabel_sui_plugins_footer' ) ) {
 					jQuery(document).ready(function () {
 						var wpmudev_whitelabel_footer = function () {
 							var sui_footer = jQuery('#wpbody-content .sui-footer');
-							sui_footer.html('<?php echo esc_html( $text )?>');
+							sui_footer.html('<?php echo esc_html( $text ); ?>');
 							sui_footer.css('visibility', 'visible');
 						}();
 					})
@@ -4534,7 +4568,6 @@ if ( ! function_exists( 'wpmudev_whitelabel_sui_plugins_footer' ) ) {
 			<?php
 			$output = ob_get_clean();
 		}
-
 
 		/**
 		 * Filter output SUI whitelabel-ing
@@ -4555,7 +4588,6 @@ if ( ! function_exists( 'wpmudev_whitelabel_sui_plugins_docs' ) ) {
 	 * Try to utilize `WPMUDEV_Dashboard::` if its needed
 	 *
 	 * @since 4.6
-	 *
 	 */
 	function wpmudev_whitelabel_sui_plugins_doc_links() {
 		$whitelabel_settings = WPMUDEV_Dashboard::$site->get_whitelabel_settings();
@@ -4580,7 +4612,7 @@ if ( ! function_exists( 'wpmudev_whitelabel_sui_plugins_docs' ) ) {
 							if (header_right_action_links.length) {
 								header_right_action_links.each(function () {
 									var link = jQuery(this),
-									    href = link.attr('href');
+										href = link.attr('href');
 									// remove docs.*
 									if (/premium\.wpmudev\.org\/(docs|project)\/.*/i.test(href)) {
 										link.remove();
@@ -4595,7 +4627,6 @@ if ( ! function_exists( 'wpmudev_whitelabel_sui_plugins_docs' ) ) {
 			<?php
 			$output = ob_get_clean();
 		}
-
 
 		/**
 		 * Filter output SUI whitelabel-ing

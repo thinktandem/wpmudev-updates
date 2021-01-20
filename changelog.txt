@@ -5,6 +5,58 @@ Change Log:
 ----------------------------------------------------------------------
 ----------------------------------------------------------------------
 
+4.10.6 - 12/02/2020 - Aaron, Ivan
+- Fix: Upgrade Forminator Free to Pro on Dashboard Sign In
+
+----------------------------------------------------------------------
+
+4.10.5 - 10/08/2020 - Aaron, Ivan
+- Fix: Small fixes and stability improvements
+- Fix: Match grant support access icon in side menu with content
+
+----------------------------------------------------------------------
+
+4.10.4 - 10/06/2020 - Aaron, Ivan
+- Fix: Small fixes and stability improvements
+
+----------------------------------------------------------------------
+
+4.10.3 - 09/21/2020 - Aaron, Ivan
+- Fix: Plugins bulk actions position wrong in Firefox
+- Fix: Some URLs are pointing to the Hub 1
+- Fix: Improve description of white label Docs setting
+- Add: Allow JWT sign in for the Hub Client
+
+----------------------------------------------------------------------
+
+4.10.2 - 09/10/2020 - Aaron, Ivan
+- Fix: Small fixes and stability improvements
+
+----------------------------------------------------------------------
+
+4.10.1 - 08/27/2020 - Aaron, Ivan
+- Fix: Translations Update modal closes before update is finished
+- Fix: Update documentation links on Analytics and Whitelabel pages
+- Fix: Fix php notices on Plugins and Main page
+
+----------------------------------------------------------------------
+----------------------------------------------------------------------
+
+4.10.0 - 08/20/2020 - Aaron, Ivan
+- Add: Split Tools into separate Whitelabel and Analytics pages
+- Add: Hide Dashboard from plugin list when Whitelabeling is active
+- Improvement: Prevent directory listing for all directories
+- Fix: Ensure compatibility with WP 5.5
+- Fix: Support access remains active after Dashboard is deactivated
+- Fix: Click at View Changelog more than once runs plugin update
+- Fix: Support Ticket display on the main page and on My Tickets page
+- Fix: PHPSecLib's random crypt not compatible with PHP 7.3
+- Fix: Blank content showing if Check Again is clicked on Settings and Support pages
+- Fix: Whitelabel page not showing correct situation for expired membership
+- Fix: Modals not closing properly on various close buttons
+
+----------------------------------------------------------------------
+
 4.9.4 - 06/18/2020 - Aaron, Ivan, Biplav
 - Fix: improve display of Snapshot versions
 
@@ -629,4 +681,4 @@ Added option to disable admin notices.
 Initial Release.
 
 
-855406-1593442884
+855406-1611157507

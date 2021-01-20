@@ -227,7 +227,12 @@ if ( $installed_free_projects_names ) {
 
 				<?php foreach ( $login_errors as $login_error ) : ?>
 					<div class="sui-notice sui-notice-error">
-						<p><?php echo $login_error; // wpcs xss ok. ?></p>
+						<div class="sui-notice-content">
+							<div class="sui-notice-message">
+								<i class="sui-notice-icon sui-icon-info sui-md" aria-hidden="true"></i>
+								<p><?php echo $login_error; // wpcs xss ok. ?></p>
+							</div>
+						</div>
 					</div>
 				<?php endforeach; ?>
 				<div clas="dashui-login-button-wrap">
