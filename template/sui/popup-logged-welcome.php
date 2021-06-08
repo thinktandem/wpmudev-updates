@@ -9,7 +9,7 @@ if ( isset( $_GET['updated-plugins'] ) && ! empty( $_GET['updated-plugins'] ) &&
 		$project_names[] = str_replace( 'Pro', '', $project->name );
 	}
 
-	$message = sprintf( esc_html__( "You’re now connected to The Hub. Pro versions of %s have been enabled. You can manage this sites updates and services in %s The Hub %s.", 'wpmudev' ), preg_replace( '/,([^,]*)$/', ' and \1', implode( ', ', $project_names ) ), '<a href="' . esc_url( $urls->hub_url ) . '">', '</a>' );		 	    		 				  	 	
+	$message = sprintf( esc_html__( "You’re now connected to The Hub. Pro versions of %s have been enabled. You can manage this sites updates and services in %s The Hub %s.", 'wpmudev' ), preg_replace( '/,([^,]*)$/', ' and \1', implode( ', ', $project_names ) ), '<a href="' . esc_url( $urls->hub_url ) . '">', '</a>' );
 }
 
 if ( 'single' === $type ) {

@@ -73,6 +73,13 @@ $footer_nav_links[] = array(
 	'href' => 'https://incsub.com/privacy-policy/',
 	'name' => __( 'Privacy Policy', 'wpmudev' ),
 );
+
+/**
+ * Action hook to render something before SUI footer.
+ *
+ * @since 4.11
+ */
+do_action( 'wpmudev_dashboard_ui_before_footer' );
 ?>
 <div class="sui-footer"><?php echo $footer_text ?></div>
 
@@ -97,4 +104,11 @@ $footer_nav_links[] = array(
 			</a>
 		</li>
 	</ul>
-<?php endif; ?>
+<?php endif;
+/**
+ * Action hook to render something after SUI footer.
+ *
+ * @since 4.11
+ */
+do_action( 'wpmudev_dashboard_ui_after_footer' );
+?>
